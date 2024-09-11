@@ -4,11 +4,15 @@ A delusional lance main's attempt at making a mod loader.
 
 ## File replacer format
 
-| U Int       | File length - 8  |
-| File tables | 8 bytes per file |
+| Section     | Description         |
+|-------------|---------------------|
+| Tables size | UInt File size - 8  |
+| File tables | 8 bytes per file    |
 
 ### File table row
 
+| Type    | Description         |
+|---------|---------------------|
 | U Int   | Offset in `DATA.BIN`|
 | char[4] | Filename            |
 
