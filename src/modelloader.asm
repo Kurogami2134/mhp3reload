@@ -90,6 +90,3 @@ file_id:
     .align
 filesize:
     .word       0
-MLTables:
-.word       0x22e41000
-.ascii      "1496"
