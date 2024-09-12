@@ -51,17 +51,15 @@ preload:
     li			a2, 0x1FF
     sb			v0, 0x0(sp)
     move		a0, v0
-    li			a1, 0x8802030
+    li			a1, MLTables
     jal 		sceIoRead
     li			a2, 0x4
     lb			a0, 0x0(sp)
-    li			a1, 0x8802030
+    li			a1, MLTables
     jal 		sceIoRead
     lw			a2, 0x0(a1)
     jal 		sceIoClose
     lb			a0, 0x0(sp)
-    lui			t7, 0x886
-    sw			zero, 0x42E8(t7)
     addiu		sp, sp, 0x1
 
     lw          v0, 0x0(sp)

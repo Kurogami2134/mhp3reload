@@ -29,21 +29,17 @@ sceIoSeek       equ         0x08960A48
 
 j               preload
 
-.org            0x0886406C; getsize hook1
-
-j               getsize1
-
-.org            0x0886451C; getsize hook2
-
-j               getsize2
-
-.org            0x088641F0; crypto skip hook
-
-j               cryptoskip
-
 .org            0x0886242C; read hook
 
 j               read
+
+.org            0x088641F0; cryptoskip hook
+
+j               cryptoskip
+
+.org            0x088642E8; skip size check
+
+nop
 
 .org            0x08864390; seek hook
 
