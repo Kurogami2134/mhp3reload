@@ -10,11 +10,13 @@ Files for file replacer should be placed in `ms0:P3rdML/files/`, and should be n
 
 `mods.bin` file must contain mods in the following format:
 
-| Type    | Description  |
-| ------- | ------------ |
-| U Int   | Load Address |
-| U Int   | Mod Length   |
-| Byte[n] | Mod content  |
+| Type    | Description   |
+| ------- | ------------- |
+| U Int   | Load Address  |
+| U Int   | *Mod Length   |
+| Byte[n] | Mod content   |
+
+* Most significant bit from Mod Length is used to determine if the mod should be run as it's loaded.
 
 and end in `0xFFFFFFFF00000000`.
 

@@ -25,10 +25,27 @@ preload:
     beq         t9, t8, @end
     nop
 
-    lh          a0, 0xC(sp)
     lw          a1, 0x10(sp)
-    jal         sceIoRead
     lw          a2, 0x14(sp)
+
+; discard first bit from file size
+    sll         a2, a2, 0x1
+    srl         a2, a2, 0x1
+
+    jal         sceIoRead
+    lh          a0, 0xC(sp)
+    
+
+; check if mod is to be run at load time
+    lw          a0, 0x14(sp)
+    srl         a0, a0, 0x1F
+    beq         a0, zero, @no_run
+    nop
+    lw          a0, 0x10(sp)
+    jalr        a0
+    nop
+
+@no_run:
 
     j           @loop
     nop
