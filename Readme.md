@@ -4,26 +4,11 @@ A delusional lance main's attempt at making a mod loader.
 
 ## File replacer format
 
-| Section     | Description         |
-|-------------|---------------------|
-| Tables size | UInt File size - 8  |
-| File tables | 8 bytes per file    |
-
-### File table row
-
-| Type    | Description         |
-|---------|---------------------|
-| U Int   | Offset in `DATA.BIN`|
-| char[4] | Filename            |
+Files for file replacer should be placed in `ms0:P3rdML/files/`, and should be named as their file id/index.
 
 ## Mods file format
 
-| Section | Description                |
-| ------- | -------------------------- |
-| Header  | Short containing mod count |
-| Mods    | Mods one after another     |
-
-### Mod format
+`mods.bin` file must contain mods in the following format:
 
 | Type    | Description  |
 | ------- | ------------ |
@@ -31,11 +16,12 @@ A delusional lance main's attempt at making a mod loader.
 | U Int   | Mod Length   |
 | Byte[n] | Mod content  |
 
+and end in `0xFFFFFFFF00000000`.
+
 ## File structure
 
  - `ms0:/P3rdML/mods.bin` is the file where mods are loaded from.
  - `ms0:/P3rdML/files/` should contain all the files to load as replacements
- - `ms0:/P3rdML/files/file` should contain file tables
 
 ## Required files
 

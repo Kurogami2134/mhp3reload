@@ -1,14 +1,24 @@
 checkfile:
-		li			t7, MLTables
-	@@loop:
-		lw			t6, 0x0(t7)
-		beq			t6, zero, openfile
-		nop
-		bnel		t6, a2, @@loop
-		addiu		t7, t7, 0x8
-		lw			t5, 0x4(t7)
-		li			t7, path_end
-		sw			t5, 0x0(t7)
+        lhu         v0, 0x2(s2)
+        li          t6, 0x4
+        li          t7, path_end+3
+    @@loop:
+        beq         t6, zero, @@end
+        nop
+        andi        v1, v0, 0xF
+        addiu       v1, v1, 0x30
+
+        slti        at, v1, 0x3A
+        bne         at, zero, @@write
+        nop
+        addiu       v1, v1, 0x7
+    @@write:
+        sb          v1, 0x0(t7)
+        srl         v0, v0, 0x4
+        addiu       t7, t7, -1
+        j           @@loop
+        addiu       t6, t6, -1
+    @@end:
 		j			openfile
 		nop
 closeopenfile:
@@ -23,12 +33,15 @@ closeopenfile:
 		j			checkfile
 		nop
 openfile:
-		bne			a2, t6, ret_seek
-		nop
 		addiu		sp, sp, -0x60
 		li			a0, path
 		jal 		sceIoGetStat
         move		a1, sp
+
+        slt         at, v0, zero
+        bnel        at, zero, ret_seek
+        addiu		sp, sp, 0x60
+
 		lw			t7, 0x8(sp)
 		li			t6, filesize
 		sw			t7, 0x0(t6)
@@ -39,9 +52,10 @@ openfile:
         li			a2, 0x1FF
 		li			t7, file_id
 		sb			v0, 0x0(t7)
+
 		lw			ra, 0x0(sp); return skipping the seek, and with the file open
 		jr			ra
-		addiu		sp, sp, 0x4
+		addiu		sp, sp, 0x10
 read:
 		addiu		sp, sp, -0x4
 		sw			ra, 0x0(sp)
@@ -58,13 +72,21 @@ ret_read:
 		j   		sceIoRead
 		addiu		sp, sp, 0x4
 seek:
-		addiu		sp, sp, -0x4
+		addiu		sp, sp, -0x10
+        sw          a0, 0x4(sp)
+        sw          a1, 0x8(sp)
+        sw          a2, 0xC(sp)
 		j			closeopenfile
 		sw			ra, 0x0(sp)
 ret_seek:
 		lw			ra, 0x0(sp)
+        lw          a0, 0x4(sp)
+        lw          a1, 0x8(sp)
+        lw          a2, 0xC(sp)
+        li          a3, 0x0
+        li          t0, 0x0
 		j           sceIoSeek
-		addiu		sp, sp, 4
+		addiu		sp, sp, 0x10
 
 cryptoskip:
     li			t7, file_id
