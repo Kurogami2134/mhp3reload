@@ -20,7 +20,6 @@ sceIoGetStat    equ         0x08960A28
 sceIoOpen       equ         0x08960A40
 sceIoSeek       equ         0x08960A48
 
-MLTables        equ         0x08802000
 
 .relativeinclude on
 

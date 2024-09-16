@@ -34,7 +34,6 @@ preload:
 
     jal         sceIoRead
     lh          a0, 0xC(sp)
-    
 
 ; check if mod is to be run at load time
     lw          a0, 0x14(sp)
