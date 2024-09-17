@@ -8,7 +8,22 @@ Files for file replacer should be placed in `ms0:P3rdML/files/`, and should be n
 
 ## Mods file format
 
-`mods.bin` file must contain mods in the following format:
+Mods are now divided into multiple mod files, with `mods.bin` now containing tables with their paths.
+
+### `mods.bin` Format
+
+| Type    | Description                                       |
+| ------- | ------------------------------------------------- |
+| U Int   | Path length                                       |
+| Byte[n] | File path, starting with `/` and ending in `0x00` |
+
+* Max path length is 22 (not counting the `/` at the start, nor the null byte at the end).
+
+`mods.bin` must end in `0xFFFFFFFF`.
+
+### Mod file format
+
+Mod files must contain mods in the following format:
 
 | Type    | Description   |
 | ------- | ------------- |
@@ -22,8 +37,9 @@ and end in `0xFFFFFFFF00000000`.
 
 ## File structure
 
- - `ms0:/P3rdML/mods.bin` is the file where mods are loaded from.
- - `ms0:/P3rdML/files/` should contain all the files to load as replacements
+ - `ms0:/P3rdML/mods.bin` should contain a list of mod files.
+ - `ms0:/P3rdML/mods/` should contain mod files or folders.
+ - `ms0:/P3rdML/files/` should contain all the files to load as replacements.
 
 ## Required files
 
