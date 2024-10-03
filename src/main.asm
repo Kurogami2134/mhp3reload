@@ -29,25 +29,40 @@ sceIoSeek       equ         0x08960A48
 
 j               preload
 
-.org            0x0886242C; read hook
-
-j               read
-
-.org            0x088641F0; cryptoskip hook
-
-j               cryptoskip
-
-.org            0x088642E8; skip size check
-
-nop
-
-.org            0x08864390; seek hook
-
-jal             seek
-
 .org            0x089E02A0
 
 .include        "preload.asm"
+
+.close
+
+.create         "../bin/mlhooks", 0x08800500
+
+.word           0x0886242C; read hook
+.word           0x4
+
+j               read
+
+.word           0x088641F0; cryptoskip 
+.word           0x4
+.resetdelay
+
+j               cryptoskip
+
+.word           0x088642E8; skip size check
+.word           0x4
+
+nop
+
+.word           0x08864390; seek hook
+.word           0x4
+
+jal             seek
+
+
+.close
+
+.create         "../bin/ml", 0x08800500
+
 .include        "modelloader.asm"
 
 .close
