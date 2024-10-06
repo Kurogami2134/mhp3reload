@@ -35,7 +35,7 @@ j               preload
 
 .close
 
-.create         "../bin/mlhooks", 0x08800500
+.create         "../bin/mlhooks.bin", 0x08800500
 
 .word           0x0886242C; read hook
 .word           0x4
@@ -58,6 +58,8 @@ nop
 
 jal             seek
 
+.word           -1
+.word           0
 
 .close
 

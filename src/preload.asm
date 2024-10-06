@@ -22,10 +22,10 @@ preload:
     lh          a0, 0xC(sp)
     addiu       a1, sp, 0x10
     jal         sceIoRead
-    li          a2, 0x4
+    li          a2, 0x1
 
-    lw          a2, 0x10(sp)
-    li          t8, 0xFFFFFFFF
+    lb          a2, 0x10(sp)
+    li          t8, -1
     beq         a2, t8, @ret
     nop
 

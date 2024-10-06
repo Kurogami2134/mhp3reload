@@ -14,7 +14,7 @@ Mods are now divided into multiple mod files, with `mods.bin` now containing tab
 
 | Type    | Description                                       |
 | ------- | ------------------------------------------------- |
-| U Int   | Path length                                       |
+| U Byte  | Path length                                       |
 | Byte[n] | File path, starting with `/` and ending in `0x00` |
 
 * Max path length is 22 (not counting the `/` at the start, nor the null byte at the end).
