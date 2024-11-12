@@ -68,8 +68,13 @@ read:
     nop
     li          t6, filesize
     lw          t6, 0x0(t6)
-    move        a0, t7
+    
+    lui         a0, 0x2
+    slt         a0, t6, a0
+    bnel        a0, zero, @@after
     move        a2, t6
+@@after:
+    move        a0, t7
 ret_read:
     lw          ra, 0x0(sp)
     j           sceIoRead
@@ -80,7 +85,18 @@ seek:
     sw          a0, 0x4(sp)
     sw          a1, 0x8(sp)
     sw          a2, 0xC(sp)
+    
+    lhu         v0, 0x2(s2)
+    li          v1, lastfile
+    lh          at, 0x0(v1)
+    bne         at, v0, @@after
+    nop
+    jr          ra
+    nop
+@@after:
+    sh          v0, 0x0(v1)
     j           closeopenfile
+
     sw          ra, 0x0(sp)
 ret_seek:
     lw          ra, 0x0(sp)
@@ -105,7 +121,9 @@ decrypter:
     j           0x08863998
     addiu       ra, ra, 0x41F8
 
-    .halfword   0
+    .align      2
+lastfile:
+    .halfword       0
 path:
     .ascii      "ms0:/P3rdML/files/"
 path_end:
