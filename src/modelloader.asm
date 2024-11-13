@@ -64,15 +64,19 @@ read:
     sw          ra, 0x0(sp)
     li          t7, file_id
     lb          t7, 0x0(t7)
-    beq         t7, zero, ret_read
-    nop
+    li          at, lastfile
+    beql        t7, zero, ret_read
+    sh          zero, 0x0(at)
     li          t6, filesize
     lw          t6, 0x0(t6)
     
     lui         a0, 0x2
     slt         a0, t6, a0
-    bnel        a0, zero, @@after
+    beq         a0, zero, @@after
+    nop
+    sh          zero, 0x0(at)
     move        a2, t6
+    
 @@after:
     move        a0, t7
 ret_read:
