@@ -39,7 +39,13 @@ and end in `0xFFFFFFFF00000000`.
 
  - `ms0:/P3rdML/mods.bin` should contain a list of mod files.
  - `ms0:/P3rdML/mods/` should contain mod files or folders.
- - `ms0:/P3rdML/files/` should contain all the files to load as replacements.
+ - `ms0:/P3rdML/files/` should contain all the files to load as replacements and patches.
+
+### Notes
+
+ - Replacement files must be named after the file id they are supposed to replace. All letters must be capitalized.
+ - Patches must follow the [mod file format](#mod-file-format) and be named `XXXXP`, with `XXXX` being the id of the file to replace.
+ - Currently a file cannot be both replaced and patched at the same time.
 
 ## Required files
 

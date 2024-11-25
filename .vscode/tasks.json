@@ -12,11 +12,14 @@
                 "-sym2",
                 "bin/p3reload.sym"
             ],
-            "group": "build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "presentation": {
                 // Reveal the output only if unrecognized errors occur.
                 "reveal": "silent"
-            },
+            }
         }
     ]
 }
