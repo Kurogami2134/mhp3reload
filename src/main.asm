@@ -68,3 +68,5 @@ jal             seek
 .include        "modelloader.asm"
 
 .close
+
+.include        "mldebug.asm"
