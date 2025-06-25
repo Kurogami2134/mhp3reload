@@ -35,28 +35,34 @@ closeopenfile:
     nop
 
 patch_file:
+    addiu       sp, sp, -0x1
+    sb          a1, 0x0(sp)
     la          a0, path_end
-    li          a1, 0x50
     sb          a1, 0x4(a0)
     la          a0, path
 
     jal         sceIoGetStat
-    move        a1, sp
+    addiu       a1, sp, 1
 
     slt         at, v0, zero
     bne         at, zero, @@skip
     nop
 
     la          a0, do_patch
-    li          a1, 0x50
+    lb          a1, 0x0(sp)
     sb          a1, 0x0(a0)
 
 @@skip:
+    li          a1, 0x50
+    lb          a0, 0x0(sp)
+    bnel        a1, a0, patch_file
+    addiu       sp, sp, 1
+
     la          a0, path_end
     sb          zero, 0x4(a0)
 
     b           ret_seek
-    addiu       sp, sp, 0x60
+    addiu       sp, sp, 0x61
 
 
 openfile:
@@ -66,8 +72,34 @@ openfile:
     move        a1, sp
 
     slt         at, v0, zero
+    la          a0, sp_index
+    lb          a1, 0x0(a0)
+    beql        a1, zero, @@patch_instead
+    addiu       a1, a1, 0x50
+    b           @@load_sp
+    nop
+@@patch_instead:
     bnel        at, zero, patch_file
     nop
+
+@@load_sp:
+    beq         at, zero, @@continue
+    nop
+
+    la          a0, path_end
+    addiu       a1, a1, 0x30
+    sb          a1, 0x4(a0)
+    la          a0, path
+    jal         sceIoGetStat
+    move        a1, sp
+
+    slt         at, v0, zero
+    la          a0, sp_index
+    lb          a1, 0x0(a0)
+    bnel        at, zero, patch_file
+    addiu       a1, a1, 0x50
+
+@@continue:
 
     lw          t7, 0x8(sp)
     li          t6, filesize
@@ -151,8 +183,11 @@ load_patch:
     sw          a2, 0x04(sp)
     sw          v0, 0x08(sp)
 
+    la          t3, do_patch
+    lb          a1, 0x0(t3)
+    sb          zero, 0x0(t3)
+
     la          a0, path_end
-    li          a1, 0x50
     sb          a1, 0x4(a0)
     la          a0, path
 
@@ -170,9 +205,7 @@ load_patch:
 
 decrypter:
     la          t3, do_patch
-    nop
     lb          t4, 0x0(t3)
-    sb          zero, 0x0(t3)
     beq         t4, zero, @@default
     nop
     la          ra, load_patch
@@ -191,11 +224,13 @@ path:
     .ascii      "ms0:/P3rdML/files/"
 path_end:
     .asciiz      "file"
-    .byte       0
+    .word       0
 file_id:
     .byte       0
 do_patch:
     .byte       0
-    .align
+sp_index:
+    .byte       0
+    .align 4
 filesize:
     .word       0

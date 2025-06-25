@@ -63,7 +63,7 @@ jal             seek
 
 .close
 
-.create         "../bin/ml", 0x08800500
+.create         "../bin/ml", 0x08800480
 
 .include        "modelloader.asm"
 
