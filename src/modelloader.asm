@@ -217,6 +217,18 @@ decrypter:
     j           0x08863998
     addiu       ra, ra, 0x
 
+.func fix_file_size
+    srl     at, a2, 24
+    beq     at, zero, @@normal_ret
+    nop
+    li      at, filesize
+    lw      a2, 0x0(at)
+@@normal_ret:
+    j       memcpy
+    nop
+.endfunc
+
+
     .align      2
 lastfile:
     .halfword       0
