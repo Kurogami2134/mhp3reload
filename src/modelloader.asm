@@ -133,6 +133,7 @@ read:
     nop
     sh          zero, 0x0(at)
     move        a2, t6
+    sw          t6, 0x8(s2)
     
 @@after:
     move        a0, t7
@@ -218,14 +219,16 @@ decrypter:
     addiu       ra, ra, 0x
 
 .func fix_file_size
-    srl     at, a2, 24
-    beq     at, zero, @@normal_ret
+    slti    at, a1, 0x3000
+    bne     at, zero, @@normal_ret
     nop
-    li      at, filesize
-    lw      a2, 0x0(at)
+    li      v0, 0x40
+    jr      ra
+    sll     v0, v0, 0xB
 @@normal_ret:
-    j       memcpy
-    nop
+    sll     v0, a1, 2
+    j       SIZE_LOAD_HOOK + 8
+    addu    v0, v0, a0
 .endfunc
 
 
