@@ -1,3 +1,52 @@
+.func get_file_size
+    addiu       sp, sp, -0x10
+    sw          ra, 0x0(sp)
+    sw          a1, 0x4(sp)
+    sw          a0, 0x8(sp)
+
+    move        v0, a1
+    li          t6, 0x4
+    li          t7, size_path_end+3
+@@loop:
+    beq         t6, zero, @@end
+    nop
+    andi        v1, v0, 0xF
+    addiu       v1, v1, 0x30
+
+    slti        at, v1, 0x3A
+    bne         at, zero, @@write
+    nop
+    addiu       v1, v1, 0x7
+@@write:
+    sb          v1, 0x0(t7)
+    srl         v0, v0, 0x4
+    addiu       t7, t7, -1
+    b           @@loop
+    addiu       t6, t6, -1
+@@end:
+    li          a0, size_path
+    jal         sceIoGetStat
+    addiu       a1, sp, -0x60
+
+    slt         at, v0, zero
+    bnel        at, zero, @@ret
+    nop
+    
+    lw          ra, 0x0(sp)
+    lw          v1, -0x58(sp)
+    j           0x08863CD0
+    addiu       sp, sp, 0x10
+
+@@ret:
+    lw          a1, 0x4(sp)
+    lw          a0, 0x8(sp)
+    lw          ra, 0x0(sp)
+    sll         v0, a1, 2
+    addu        v0, v0, a0
+    j           SIZE_LOAD_HOOK + 8
+    addiu       sp, sp, 0x10
+.endfunc
+
 checkfile:
     lhu         v0, 0x2(s2)
     li          t6, 0x4
@@ -16,10 +65,10 @@ checkfile:
     sb          v1, 0x0(t7)
     srl         v0, v0, 0x4
     addiu       t7, t7, -1
-    j           @@loop
+    b           @@loop
     addiu       t6, t6, -1
 @@end:
-    j           openfile
+    b           openfile
     nop
 
 closeopenfile:
@@ -31,7 +80,7 @@ closeopenfile:
     move        a0, t6
     li          t7, file_id
     sb          zero, 0x0(t7)
-    j           checkfile
+    b           checkfile
     nop
 
 patch_file:
@@ -133,7 +182,6 @@ read:
     nop
     sh          zero, 0x0(at)
     move        a2, t6
-    sw          t6, 0x8(s2)
     
 @@after:
     move        a0, t7
@@ -218,20 +266,11 @@ decrypter:
     j           0x08863998
     addiu       ra, ra, 0x
 
-.func fix_file_size
-    slti    at, a1, 0x3000
-    bne     at, zero, @@normal_ret
-    nop
-    li      v0, 0x40
-    jr      ra
-    sll     v0, v0, 0xB
-@@normal_ret:
-    sll     v0, a1, 2
-    j       SIZE_LOAD_HOOK + 8
-    addu    v0, v0, a0
-.endfunc
-
-
+size_path:
+    .ascii      "ms0:/P3rdML/files/"
+size_path_end:
+    .asciiz      "file"
+    .word       0
     .align      2
 lastfile:
     .halfword       0
