@@ -1,3 +1,35 @@
+.psp
+
+HOOK            equ         0x08896C98
+
+PSP_O_RDONLY    equ         0x00000001
+PSP_O_WRONLY    equ         0x00000002
+PSP_O_RDWR      equ         0x00000003
+PSP_O_NBLOCK    equ         0x00000010
+PSP_O_APPEND    equ         0x00000100
+PSP_O_CREAT     equ         0x00000200
+PSP_O_TRUNC     equ         0x00000400
+PSP_O_EXCL      equ         0x00000800
+PSP_O_NOWAIT    equ         0x00008000
+PSP_O_NPDRM     equ         0x40000000
+
+sceIoWrite      equ         0x08960A00
+sceIoRead       equ         0x08960A10
+sceIoRename     equ         0x08960A18
+sceIoClose      equ         0x08960A20
+sceIoGetStat    equ         0x08960A28
+sceIoOpen       equ         0x08960A40
+sceIoSeek       equ         0x08960A48
+
+SIZE_LOAD_HOOK  equ         0x08863CB8
+.relativeinclude on
+
+
+.createfile "../bin/preload.bin", 0x089E02A0 - 8
+.word 0x089E02A0
+.word end-start
+start:
+
 .area 0x28, 0x0
 @path:
     .ascii      "ms0:/P3RDML/MODS"
@@ -46,11 +78,10 @@ preload:
     jal         sceIoClose
     nop
 
-    lw          v0, 0x0(sp)
-    lw          v1, 0x4(sp)
-    lw          ra, 0x8(sp)
+    lui         v0, 0x9BB
+    lw          a0, 0x7E78(v0)
 
-    jr          ra
+    j           HOOK + 8
     addiu       sp, sp, 0x18
 
 load_mods:
@@ -105,3 +136,13 @@ load_mods:
     lw          ra, 0x2(sp)
     jr          ra
     addiu       sp, sp, 0x16
+
+
+end:
+.word           HOOK
+.word 8
+j               preload
+nop
+.word -1
+.word 0
+.close

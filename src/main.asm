@@ -42,39 +42,49 @@ j               preload
 .word           0x0886242C; read hook
 .word           0x4
 
-j               read
+    j               read
 
 .word           0x088641F0; cryptoskip 
 .word           0x4
 .resetdelay
 
-j               cryptoskip
+    j               cryptoskip
 
 .word           0x088642E8; skip size check
 .word           0x4
 
-nop
+    nop
 
 .word           SIZE_LOAD_HOOK; fix bugged sizes when loading non existent files
 .word           0x8
 
-j               get_file_size
-nop
+    j               get_file_size
+    nop
 
 .word           0x08864390; seek hook
 .word           0x4
 
-jal             seek
+    jal             seek
+
+.word           0x08864374; allow seek in contiguous files
+.word           0x4
+    nop
 
 .word           -1
 .word           0
 
 .close
 
-.create         "../bin/ml", 0x08801140
+.create         "../bin/modloader.bin", 0x08801140 - 8
+.word 0x08801140
+.word @main_block_end - 0x08801140
+
 
 .include        "modelloader.asm"
 
+@main_block_end:
+.word -1
+.word 0
 .close
 
 .include        "mldebug.asm"

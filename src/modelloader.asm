@@ -84,14 +84,14 @@ closeopenfile:
     nop
 
 patch_file:
-    addiu       sp, sp, -0x1
+    addiu       sp, sp, -0x4
     sb          a1, 0x0(sp)
     la          a0, path_end
     sb          a1, 0x4(a0)
     la          a0, path
 
     jal         sceIoGetStat
-    addiu       a1, sp, 1
+    addiu       a1, sp, 4
 
     slt         at, v0, zero
     bne         at, zero, @@skip
@@ -105,13 +105,13 @@ patch_file:
     li          a1, 0x50
     lb          a0, 0x0(sp)
     bnel        a1, a0, patch_file
-    addiu       sp, sp, 1
+    addiu       sp, sp, 4
 
     la          a0, path_end
     sb          zero, 0x4(a0)
 
     b           ret_seek
-    addiu       sp, sp, 0x61
+    addiu       sp, sp, 0x64
 
 
 openfile:
@@ -267,7 +267,7 @@ decrypter:
     addiu       ra, ra, 0x
 
 size_path:
-    .ascii      "ms0:/P3rdML/files/"
+    .ascii      "ms0:/P33DML/FILES/"
 size_path_end:
     .asciiz      "file"
     .word       0
@@ -275,9 +275,9 @@ size_path_end:
 lastfile:
     .halfword       0
 path:
-    .ascii      "ms0:/P3rdML/files/"
+    .ascii      "ms0:/P3RDML/FILES/"
 path_end:
-    .asciiz      "file"
+    .asciiz      "FILE"
     .word       0
 file_id:
     .byte       0
