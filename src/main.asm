@@ -37,54 +37,53 @@ j               preload
 
 .close
 
-.create         "../bin/mlhooks.bin", 0x08800500
+.create         "../bin/modloader.bin", 0x08800000 - 0x10
+.ascii "0.01FLRP"
 
-.word           0x0886242C; read hook
-.word           0x4
+.word 1
+.word @main_block_end - @main_block_start
 
-    j               read
-
-.word           0x088641F0; cryptoskip 
-.word           0x4
-.resetdelay
-
-    j               cryptoskip
-
-.word           0x088642E8; skip size check
-.word           0x4
-
-    nop
-
-.word           SIZE_LOAD_HOOK; fix bugged sizes when loading non existent files
-.word           0x8
-
-    j               get_file_size
-    nop
-
-.word           0x08864390; seek hook
-.word           0x4
-
-    jal             seek
-
-.word           0x08864374; allow seek in contiguous files
-.word           0x4
-    nop
-
-.word           -1
-.word           0
-
-.close
-
-.create         "../bin/modloader.bin", 0x08801140 - 8
-.word 0x08801140
-.word @main_block_end - 0x08801140
-
+@main_block_start:
 
 .include        "modelloader.asm"
 
 @main_block_end:
-.word -1
-.word 0
-.close
 
-.include        "mldebug.asm"
+
+.word 2
+.word           0x0886242C; read hook
+.halfword       read - @main_block_start
+.byte           8
+.byte           0
+
+.word 2
+.word           0x088641F0; cryptoskip 
+.halfword       cryptoskip - @main_block_start
+.byte           8
+.byte           0
+
+.word 0
+.word           0x088642E8; skip size check
+.word           0x4
+    nop
+
+
+.word 2
+.word           SIZE_LOAD_HOOK; fix bugged sizes when loading non existent files
+.halfword           get_file_size - @main_block_start
+.byte           8
+.byte           1
+
+.word 2
+.word           0x08864390; seek hook
+.halfword           seek - @main_block_start
+.byte           0xC
+.byte           0
+
+.word 0
+.word           0x08864374; allow seek in contiguous files
+.word           0x4
+    nop
+
+.word -1
+.close

@@ -25,6 +25,27 @@ Mods are now divided into multiple mod files, with `mods.bin` now containing tab
 
 Mod files must contain mods in the following format:
 
+
+#### Header
+
+| Type      | Description   |
+|-----------|---------------|
+| Int       | Format Ver    |
+| char[4]   | Mod Id        |
+
+#### Blocks
+
+| Type      | Description           |
+|-----------|-----------------------|
+| Int       | Block Type            |
+| ....      | Depends on block type |
+
+##### Block Type -1 - End Block
+
+End mod loading, no data.
+
+##### Block Type 0 - Patch Block
+
 | Type    | Description   |
 | ------- | ------------- |
 | U Int   | Load Address  |
@@ -33,7 +54,25 @@ Mod files must contain mods in the following format:
 
 * Most significant bit from Mod Length is used to determine if the mod should be run as it's loaded.
 
-and end in `0xFFFFFFFF00000000`.
+##### Block Type 1 - Main Block
+
+| Type    | Description   |
+| ------- | ------------- |
+| U Int   | *Mod Length   |
+| Byte[n] | Mod content   |
+
+* Most significant bit from Mod Length is used to determine if the mod should be run as it's loaded.
+
+##### Block Type 2 - Hook Block
+
+| Type    | Description             |
+| ------- | ----------------------- |
+| U int   | Hook address            |
+| U short | Offset from main block  |
+| Byte    | hook op *               |
+| Byte    | nop filler              |
+
+* 0x08 for j, 0x0C for jal
 
 ## File structure
 
