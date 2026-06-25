@@ -8,7 +8,7 @@
             "type": "shell",
             "command": "armips",
             "args": [
-                "src/main.asm",
+                "src/no_hd.asm",
                 "-sym2",
                 "bin/p3reload.sym"
             ],

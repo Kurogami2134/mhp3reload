@@ -1,0 +1,50 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+enum <ubyte> OpType {
+    j = 8,
+    jal = 12
+};
+
+enum <int> BlockType {
+    PatchBlock = 0,
+    MainBlock = 1,
+    HookBlock = 2,
+    EndBlock = -1
+};
+
+typedef struct Block {
+    BlockType block_type;
+    if (block_type == PatchBlock) {
+        int load_add;
+        int size;
+        byte data[size];
+    } else if (block_type == MainBlock) {
+        int size;
+        char ModID[4];
+        byte data[size];
+    } else if (block_type == HookBlock) {
+        int HookAdd <format=hex>;
+        short offset;
+        OpType jump_type;
+        byte fill_null;
+    }
+};
+
+
+char FormatVer[4];
+
+Block block;
+while(!(FEof() || block.block_type == EndBlock)){  
+    Block block;
+}

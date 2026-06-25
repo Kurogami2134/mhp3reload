@@ -52,7 +52,7 @@ size_path equ size_path_ - MOD_DATA
     lw          ra, 0x0(sp)
     lw          s0, 0xC(sp)
     lw          v1, -0x58(sp)
-    j           0x08863CD0
+    j           SIZE_LOAD_HOOK + 0x18
     addiu       sp, sp, 0x14
 
 @@ret:
@@ -240,7 +240,7 @@ seek:
     addiu       sp, sp, 14
 @@after:
     sh          v0, 0x0(v1)
-    j           closeopenfile
+    b           closeopenfile
     nop
 ret_seek:
     lw          ra, 0x0(sp)
@@ -266,7 +266,7 @@ ret_seek:
     lb          t6, 0x0(t7)
     beq         t6, zero, decrypter
     nop
-    j           0x088641F8
+    j           CRYPTO_HOOK + 8
     nop
 .endfunc
 
@@ -300,7 +300,7 @@ load_patch:
     lw          a2, 0x04(sp)
     lw          s0, 0x08(sp)
     lw          v0, 0x0C(sp)
-    j           0x088641F8
+    j           CRYPTO_HOOK + 8
     addiu       sp, sp, 0xC
 
 decrypter:
@@ -318,26 +318,30 @@ decrypter:
     lb          t4, 0x0(t3)
     beq         t4, zero, @@default
     nop
-    addiu       ra, t7, (MOD_DATA - load_patch)
+    addiu       ra, t7, (load_patch - MOD_DATA)
     b           @@decrypt
     nop
 @@default:
-    la          ra, 0x088641F8
+    la          ra, CRYPTO_HOOK + 8
 @@decrypt:
-    j           0x08863998
-    addiu       ra, ra, 0x
+    j           CRYPTO_CONT
+    nop
 
 MOD_DATA:
+.area ALIGN_PATH, 0
+.endarea
 size_path_:
-    .ascii      "ms0:/P33DML/FILES/"
+    .ascii      FILES_DIR
 size_path_end_:
-    .asciiz      "file"
+    .asciiz      "FILE"
     .word       0
     .align      2
 lastfile_:
     .halfword       0
+.area ALIGN_PATH, 0
+.endarea
 path_:
-    .ascii      "ms0:/P3RDML/FILES/"
+    .ascii      FILES_DIR
 path_end_:
     .asciiz      "FILE"
     .word       0
@@ -350,3 +354,5 @@ sp_index_:
     .align 4
 filesize_:
     .word       0
+
+.align 4

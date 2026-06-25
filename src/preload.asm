@@ -1,15 +1,15 @@
 .area 0x28, 0x0
 @path:
-    .ascii      "ms0:/P3RDML/MODS"
+    .ascii      MODS_FILE
 @path_end:
     .ascii      ".BIN"
 .endarea
 
-@load_address:
-.word 0x08800000
+@entry_address:
+.word MOD_ENTRY_ADD
 
-@prev_load_address:
-.word -1
+@load_address:
+.word MOD_LOAD_ADD
 
 @format_ver:
 .ascii "0.01"
@@ -65,8 +65,9 @@
 .endfunc
 
 .func load_mods
-    addiu       sp, sp, -0x18
+    addiu       sp, sp, -0x1C
     sw          ra, 0x4(sp)
+    sw          s0, 0x18(sp)
     li          a1, PSP_O_RDONLY
     jal         sceIoOpen
     li          a2, 0x1FF
@@ -76,7 +77,7 @@
     lh          a0, 0x0(sp)
     addiu       a1, sp, 0x8
     jal         sceIoRead
-    li          a2, 0x8 ;  load mod format ver and id
+    li          a2, 0x4 ;  load mod format ver and id
     
     ;  skip if format ver doesn't match
     lw          a1, 0x8(sp)
@@ -108,17 +109,33 @@
     nop
 
     lw          ra, 0x4(sp)
+    lw          s0, 0x18(sp)
     jr          ra
-    addiu       sp, sp, 0x18
+    addiu       sp, sp, 0x1C
 .endfunc
 
 .func main_block
     lh          a0, 0x0(sp)
     addiu       a1, sp, 0x8
     jal         sceIoRead
-    li          a2, 0x4
+    li          a2, 0x8
+
+    lw          s0, 0xC(sp)
+    jal         get_mod_add
+    move        v0, s0
+
+    bne         v0, zero, @@skip_main_block
+    nop
 
     lw          a1, @load_address
+    
+    li          at, @entry_address
+    lw          a2, 0x0(at)
+    sw          s0, 0x0(a2)
+    sw          a1, 0x4(a2)
+    addiu       a2, a2, 8
+    sw          a2, 0x0(at)
+
     lw          a2, 0x8(sp)
 
 ; discard first bit from file size
@@ -140,11 +157,21 @@
 @@no_run:
     la          at, @load_address
     lw          a1, 0x0(at)
-    sw          a1, 0x4(at)
     lw          a2, 0x8(sp)
     addu        a1, a1, a2
     b           @parse_blocks
     sw          a1, 0x0(at)
+
+@@skip_main_block:
+    li          a1, 0
+    lw          a2, 0x8(sp)
+    li          a3, 0
+    li          t0, 1 ;  whence
+    jal         sceIoSeek
+    lh          a0, 0x0(sp)    
+
+    b           @parse_blocks
+    nop
 .endfunc
 
 .func hook_block
@@ -153,7 +180,10 @@
     jal         sceIoRead
     li          a2, 0x8
 
-    lw          a0, @prev_load_address
+    jal         get_mod_add
+    move        v0, s0
+
+    move        a0, v0
     lh          a1, 0xC(sp)  ; hook offset
     addu        a0, a0, a1
     srl         a0, a0, 2
@@ -206,4 +236,24 @@
 @@no_run:
     b           @parse_blocks
     nop
+.endfunc
+
+;  v0 == ModID
+.func get_mod_add
+    li          at, MOD_ENTRY_ADD
+@@loop:
+    lw          a0, 0x0(at)
+    beq         a0, zero, @@not_found
+    nop
+    beq         a0, v0, @@found
+    nop
+
+    b           @@loop
+    addiu       at, at, 8
+@@not_found:
+    jr          ra
+    li          v0, 0
+@@found:
+    jr          ra
+    lw          v0, 0x4(at)
 .endfunc

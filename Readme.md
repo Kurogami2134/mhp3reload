@@ -31,7 +31,6 @@ Mod files must contain mods in the following format:
 | Type      | Description   |
 |-----------|---------------|
 | Int       | Format Ver    |
-| char[4]   | Mod Id        |
 
 #### Blocks
 
@@ -59,6 +58,7 @@ End mod loading, no data.
 | Type    | Description   |
 | ------- | ------------- |
 | U Int   | *Mod Length   |
+| Char[4] | Mod ID        |
 | Byte[n] | Mod content   |
 
 * Most significant bit from Mod Length is used to determine if the mod should be run as it's loaded.
