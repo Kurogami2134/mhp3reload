@@ -26,11 +26,13 @@ enum <int> BlockType {
 typedef struct Block {
     BlockType block_type;
     if (block_type == PatchBlock) {
-        int load_add;
-        int size;
+        int load_add <format=hex>;
+        int size: 31;
+        int init: 1;
         byte data[size];
     } else if (block_type == MainBlock) {
-        int size;
+        int size: 31;
+        int init: 1;
         char ModID[4];
         byte data[size];
     } else if (block_type == HookBlock) {

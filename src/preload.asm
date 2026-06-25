@@ -158,6 +158,8 @@
     la          at, @load_address
     lw          a1, 0x0(at)
     lw          a2, 0x8(sp)
+    sll         a2, a2, 1
+    srl         a2, a2, 1
     addu        a1, a1, a2
     b           @parse_blocks
     sw          a1, 0x0(at)
@@ -165,6 +167,8 @@
 @@skip_main_block:
     li          a1, 0
     lw          a2, 0x8(sp)
+    sll         a2, a2, 1
+    srl         a2, a2, 1
     li          a3, 0
     li          t0, 1 ;  whence
     jal         sceIoSeek
