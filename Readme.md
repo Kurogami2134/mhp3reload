@@ -74,6 +74,14 @@ End mod loading, no data.
 
 * 0x08 for j, 0x0C for jal
 
+##### Block Type 3 - Init Block
+
+| Type    | Description   |
+| ------- | ------------- |
+| U Int   | *Mod Length   |
+| Byte[n] | Mod content   |
+
+
 ## File structure
 
  - `ms0:/P3rdML/mods.bin` should contain a list of mod files.

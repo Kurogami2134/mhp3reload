@@ -101,6 +101,8 @@
     beq         v0, v1, main_block
     li          v1, 2
     beq         v0, v1, hook_block
+    li          v1, 3
+    beq         v0, v1, init_block
     nop
 
 @end:
@@ -174,6 +176,34 @@
     jal         sceIoSeek
     lh          a0, 0x0(sp)    
 
+    b           @parse_blocks
+    nop
+.endfunc
+
+.func init_block
+    lh          a0, 0x0(sp)
+    addiu       a1, sp, 0x8
+    jal         sceIoRead
+    li          a2, 0x4
+
+    lw          a1, @load_address
+    
+    li          at, @entry_address
+    lw          a2, 0x0(at)
+    sw          s0, 0x0(a2)
+    sw          a1, 0x4(a2)
+    addiu       a2, a2, 8
+    sw          a2, 0x0(at)
+
+    lw          a2, 0x8(sp)
+
+    jal         sceIoRead
+    lh          a0, 0x0(sp)
+    nop
+    lw          a0, @load_address
+    jalr        a0
+    nop
+    
     b           @parse_blocks
     nop
 .endfunc

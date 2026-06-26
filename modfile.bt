@@ -20,6 +20,7 @@ enum <int> BlockType {
     PatchBlock = 0,
     MainBlock = 1,
     HookBlock = 2,
+    InitBlock = 3,
     EndBlock = -1
 };
 
@@ -40,6 +41,9 @@ typedef struct Block {
         short offset;
         OpType jump_type;
         byte fill_null;
+    } else if (block_type == InitBlock) {
+        int size;
+        byte data[size];
     }
 };
 
