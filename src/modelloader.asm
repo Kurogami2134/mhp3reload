@@ -290,7 +290,7 @@ load_patch:
     sb          a1, 0x4(a0)
     addiu       a0, s0, path
 
-    jal         load_mods
+    jal         load_mods + PRELOAD_LOAD
     nop
 
     addiu       a0, s0, path_end

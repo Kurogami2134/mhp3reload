@@ -1,6 +1,6 @@
 .area 0x28, 0x0
 @path:
-    .ascii      MODS_FILE
+    .ascii      MAIN_DIR + "MODS"
 @path_end:
     .ascii      ".BIN"
 .endarea
@@ -20,7 +20,7 @@
     sw          v1, 0x4(sp)
     sw          ra, 0x8(sp)
 
-    li          a0, @path
+    li          a0, @path + PRELOAD_LOAD
     li          a1, PSP_O_RDONLY
     jal         sceIoOpen
     li          a2, 0x1FF
@@ -39,12 +39,12 @@
     nop
 
     lh          a0, 0xC(sp)
-    li          a1, @path_end
+    li          a1, @path_end + PRELOAD_LOAD
     jal         sceIoRead
     nop
 
-    li          a0, @path
-    jal         load_mods
+    li          a0, @path + PRELOAD_LOAD
+    bal         load_mods
     nop
 
     b           @loop
@@ -81,7 +81,7 @@
     
     ;  skip if format ver doesn't match
     lw          a1, 0x8(sp)
-    lw          a2, @format_ver
+    lw          a2, @format_ver + PRELOAD_LOAD
     bne         a1, a2, @end
     nop
 
@@ -123,15 +123,15 @@
     li          a2, 0x8
 
     lw          s0, 0xC(sp)
-    jal         get_mod_add
+    bal         get_mod_add
     move        v0, s0
 
     bne         v0, zero, @@skip_main_block
     nop
 
-    lw          a1, @load_address
+    lw          a1, @load_address + PRELOAD_LOAD
     
-    li          at, @entry_address
+    li          at, @entry_address + PRELOAD_LOAD
     lw          a2, 0x0(at)
     sw          s0, 0x0(a2)
     sw          a1, 0x4(a2)
@@ -152,12 +152,12 @@
     srl         a0, a0, 0x1F
     beq         a0, zero, @@no_run
     nop
-    lw          a0, @load_address
+    lw          a0, @load_address + PRELOAD_LOAD
     jalr        a0
     nop
 
 @@no_run:
-    la          at, @load_address
+    la          at, @load_address + PRELOAD_LOAD
     lw          a1, 0x0(at)
     lw          a2, 0x8(sp)
     sll         a2, a2, 1
@@ -186,21 +186,14 @@
     jal         sceIoRead
     li          a2, 0x4
 
-    lw          a1, @load_address
-    
-    li          at, @entry_address
-    lw          a2, 0x0(at)
-    sw          s0, 0x0(a2)
-    sw          a1, 0x4(a2)
-    addiu       a2, a2, 8
-    sw          a2, 0x0(at)
+    lw          a1, @load_address + PRELOAD_LOAD
 
     lw          a2, 0x8(sp)
 
     jal         sceIoRead
     lh          a0, 0x0(sp)
     nop
-    lw          a0, @load_address
+    lw          a0, @load_address + PRELOAD_LOAD
     jalr        a0
     nop
     
@@ -214,7 +207,7 @@
     jal         sceIoRead
     li          a2, 0x8
 
-    jal         get_mod_add
+    bal         get_mod_add
     move        v0, s0
 
     move        a0, v0

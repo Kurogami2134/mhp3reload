@@ -10,7 +10,7 @@ sceIoSeek       equ         0x08960A48
 
 EBOOT_LOAD      equ         0x0880134C
 PRELOAD_HOOK    equ         0x088215D4
-PRELOAD_LOAD    equ         0x089E02A0
+PRELOAD_INIT    equ         0x089E02A0
 
 ;  289.75kb free
 MOD_ENTRY_ADD   equ         0x09FA2100
@@ -24,7 +24,7 @@ CRYPTO_CONT     equ         0x08863998
 SIZE_CHECK_SKIP equ         0x088642E8
 CONT_SEEK_PATCH equ         0x08864374
 
-MODS_FILE       equ         "ms0:/P3RDML/MODS"
+MAIN_DIR        equ         "ms0:/P3RDML/"
 ALIGN_PATH      equ         0
 FILES_DIR       equ         "ms0:/P3RDML/FILES/"
 

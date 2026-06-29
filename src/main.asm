@@ -13,9 +13,18 @@ PSP_O_NPDRM     equ         0x40000000
 
 .org            PRELOAD_HOOK
 
-j               preload
+j               initialize_preload
 
-.org            PRELOAD_LOAD
+.org            PRELOAD_INIT
+
+.include        "preload_init.asm"
+
+PRELOAD_LOAD:
+
+.close
+
+
+.createfile "../bin/PRELOAD.BIN", 0
 
 .include        "preload.asm"
 
